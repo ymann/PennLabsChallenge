@@ -1,4 +1,98 @@
-<!DOCTYPE html>
-<html lang="en">
-
-</html>
+<h1>Home Page</h1>
+<section class="insert">
+    <h3>Add List</h3>
+    <form action="/list" method="post">
+        <div class="input">
+    <label for="title">Title</label>
+    <input type="text" id="title" name="title">
+</div>
+    <div class="input">
+        <label for="order">Order</label>
+        <input type="number" id="order" name="order">
+    </div>
+    <div class="input">
+        <label for="id">ID</label>
+        <input type="text" id="id" name="id">
+    </div>
+    <button type="submit">INSERT</button>
+    </form>
+</section>
+<section class="insert">
+    <h3>Add Card</h3>
+    <form action="/card" method="post">
+        <div class="input">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title">
+        </div>
+        <div class="input">
+            <label for="description">Description</label>
+            <input type="text" id="description" name="description">
+        </div>
+        <div class="input">
+            <label for="listId">List ID</label>
+            <input type="text" id="listId" name="listId">
+        </div>
+        <div class="input">
+            <label for="id">ID</label>
+            <input type="text" id="id" name="id">
+        </div>
+        <button type="submit">INSERT</button>
+    </form>
+</section>
+<section class="get">
+    <h2>For Debugging:</h2>
+    <h3>Get Data</h3>
+    <a href="/get-data">LOAD Data</a>
+    <div>
+        {{# each lists }}
+            <article class="club">
+                <div>Title: {{ this.title }}</div>
+                <div>Order: {{ this.order }}</div>
+                <div>ID: {{ this.id }}</div>
+                <div>_ID: {{ this._id }}</div>
+            </article>
+        {{/each}}
+        {{# each carts }}
+            <article class="club">
+                <div>Title: {{ this.title }}</div>
+                <div>Description: {{ this.description }}</div>
+                <div>List ID: {{ this.listId }}</div>
+                <div>ID: {{ this.id }}</div>
+                <div>_ID: {{ this._id }}</div>
+            </article>
+        {{/each}}
+    </div>
+</section>
+<section class="update">
+    <h3>Update Data</h3>
+    <form action="/update" method="post">
+        <div class="input">
+            <label for="id">ID</label>
+            <input type="text" id="id" name="id">
+        </div>
+        <div class="input">
+            <label for="title">Name</label>
+            <input type="text" id="title" name="title">
+        </div>
+        <div class="input">
+            <label for="description">Description</label>
+            <input type="text" id="description" name="description">
+        </div>
+        <div class="input">
+            <label for="url">URL</label>
+            <input type="text" id="url" name="url">
+        </div>
+        <button type="submit">UPDATE</button>
+    </form>
+</section>
+</section>
+<section class="delete">
+    <h3>Delete Data</h3>
+    <form action="/delete" method="post">
+        <div class="input">
+            <label for="id">ID</label>
+            <input type="text" id="id" name="id">
+        </div>
+        <button type="submit">DELETE</button>
+    </form>
+</section>

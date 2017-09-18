@@ -35,14 +35,48 @@ router.get('/get-data', function(req, res, next) {
 router.post('/editlist', function(req, res, next) {
     mongo.connect(url, function (err, db) {
         var newIndex = parseInt(req.body.order, 10);
-        db.collection('lists').updateMany({order: {$gte: newIndex}}, {$inc: {order: 1}}, function (err, result) { // If yes, update then insert
-            assert.equal(null, err);
-            console.log('Index updated');
-            db.collection('lists').updateOne({title: req.body.title}, {$set: {order: newIndex}}, function (err, res) { // If no just insert
-                assert.equal(null, err);
-                console.log('List Inserted');
-                db.close();
-            });
+        db.collection('lists').count({}, function (err, numDocs) {
+            newIndex = (numDocs < newIndex) ? numDocs : newIndex;
+        });
+        db.collection('lists').findOne({title: req.body.title}, function(err, res) { // Get doc to be updated
+            if (res == null || res.order == null) { // Check if title is incorrect or no number was given
+                return;
+            } else {
+                /*
+                We adjust the order of the affected lists as follows:
+                If the updated list moves up in order (the order number goes down), we push everything between the old and new order values up one.
+                If the updated list moves down in order, we push everything between the old and new values down one.
+                 */
+                if (newIndex <= res.order) {
+                    db.collection('lists').updateMany({
+                        $and:
+                            [{order: {$gte: newIndex}}, // Adjust lists with indices greater than new index
+                                {order: {$lte: res.order}}] // Don't adjust those not being affected by move
+                    }, {$inc: {order: 1}}, {upsert: false}, function (err, result) {
+                        assert.equal(null, err);
+                        console.log('Index updated');
+                        db.collection('lists').updateOne({title: req.body.title}, {$set: {order: newIndex}}, {upsert: false}, function (err, res) { // If no just insert
+                            assert.equal(null, err);
+                            console.log('List Inserted');
+                            db.close();
+                        });
+                    });
+                } else {
+                    db.collection('lists').updateMany({
+                        $and:
+                            [{order: {$lte: newIndex}}, // Adjust lists with indices less than or equal to the new index
+                                {order: {$gte: res.order}}] // Don't adjust those not being affected by move
+                    }, {$inc: {order: -1}}, {upsert: false}, function (err, result) {
+                        assert.equal(null, err);
+                        console.log('Index updated');
+                        db.collection('lists').updateOne({title: req.body.title}, {$set: {order: newIndex}}, {upsert: false}, function (err, res) { // If no just insert
+                            assert.equal(null, err);
+                            console.log('List Inserted');
+                            db.close();
+                        });
+                    });
+                }
+            }
         });
         res.redirect('/');
     });
@@ -51,16 +85,48 @@ router.post('/editlist', function(req, res, next) {
 router.post('/editlist/:listId', function(req, res, next) {
     mongo.connect(url, function (err, db) {
         var newIndex = parseInt(req.body.order, 10);
-        db.collection('lists').updateMany({order: {$gte: newIndex}}, {$inc: {order: 1}}, function (err, result) { // Update order of all following lists then insert
-            assert.equal(null, err);
-            console.log('Index updated');
-            db.collection('lists').updateOne({title: req.body.title}, {$set: {order: newIndex}}, function (err, res) { // Update specified list
-                assert.equal(null, err);
-                console.log('List Inserted');
-                db.collection('lists').find().sort({order: 1});
-                console.log('List Sorted');
-                db.close();
-            });
+        db.collection('lists').count({}, function (err, numDocs) {
+            newIndex = (numDocs < newIndex) ? numDocs : newIndex;
+        });
+        db.collection('lists').findOne({title: req.body.title}, function(err, res) { // Get doc to be updated
+            if (res == null || res.order == null) { // Check if title is incorrect or no number was given
+                return;
+            } else {
+                /*
+                We adjust the order of the affected lists as follows:
+                If the updated list moves up in order (the order number goes down), we push everything between the old and new order values up one.
+                If the updated list moves down in order, we push everything between the old and new values down one.
+                 */
+                if (newIndex <= res.order) {
+                    db.collection('lists').updateMany({
+                        $and:
+                            [{order: {$gte: newIndex}}, // Adjust lists with indices greater than new index
+                                {order: {$lte: res.order}}] // Don't adjust those not being affected by move
+                    }, {$inc: {order: 1}}, {upsert: false}, function (err, result) {
+                        assert.equal(null, err);
+                        console.log('Index updated');
+                        db.collection('lists').updateOne({title: req.body.title}, {$set: {order: newIndex}}, {upsert: false}, function (err, res) { // If no just insert
+                            assert.equal(null, err);
+                            console.log('List Inserted');
+                            db.close();
+                        });
+                    });
+                } else {
+                    db.collection('lists').updateMany({
+                        $and:
+                            [{order: {$lte: newIndex}}, // Adjust lists with indices less than or equal to the new index
+                                {order: {$gte: res.order}}] // Don't adjust those not being affected by move
+                    }, {$inc: {order: -1}}, {upsert: false}, function (err, result) {
+                        assert.equal(null, err);
+                        console.log('Index updated');
+                        db.collection('lists').updateOne({title: req.body.title}, {$set: {order: newIndex}}, {upsert: false}, function (err, res) { // If no just insert
+                            assert.equal(null, err);
+                            console.log('List Inserted');
+                            db.close();
+                        });
+                    });
+                }
+            }
         });
         res.redirect('/');
     });

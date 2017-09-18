@@ -1,4 +1,4 @@
-<h1>Home Page</h1>
+<h1>PennLabs Challenge Test Page</h1>
 <section class="insert">
     <h3>Add List</h3>
     <form action="/list" method="post">
@@ -37,7 +37,7 @@
 </section>
 <section class="get">
     <h2>For Debugging:</h2>
-    <h3>Get Data</h3>
+    <h3>Get Data (loads all lists and cards)</h3>
     <a href="/get-data">LOAD Data</a>
     <div>
         {{# each lists }}
@@ -70,17 +70,6 @@
             <label for="order">Order</label>
             <input type="number" id="order" name="order">
         </div>
-        <button type="submit">UPDATE List</button>
-    </form>
-</section>
-</section>
-<section class="delete">
-    <h3>Delete Data</h3>
-    <form action="/delete" method="post">
-        <div class="input">
-            <label for="id">ID</label>
-            <input type="text" id="id" name="id">
-        </div>
-        <button type="submit">DELETE</button>
+        <button type="submit">UPDATE</button>
     </form>
 </section>
